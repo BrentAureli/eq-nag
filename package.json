@@ -1,0 +1,55 @@
+{
+  "name": "electron-angular-eq-parse",
+  "version": "0.1.54",
+  "main": "main.js",
+  "description": "An EverQuest Notification AGent",
+  "author": {
+    "name": "Guild Antix",
+    "email": "srbmmo@gmail.com"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^14.1.1",
+    "@angular/cdk": "^14.1.1",
+    "@angular/common": "^14.1.1",
+    "@angular/compiler": "^14.1.1",
+    "@angular/core": "^14.1.1",
+    "@angular/forms": "^14.1.1",
+    "@angular/material": "^14.1.1",
+    "@angular/platform-browser": "^14.1.1",
+    "@angular/platform-browser-dynamic": "^14.1.1",
+    "@angular/router": "^14.1.1",
+    "@electron/remote": "^2.0.9",
+    "@types/lodash-es": "^4.17.4",
+    "adm-zip": "^0.5.10",
+    "archiver": "^5.3.0",
+    "chokidar": "^3.4.0",
+    "cron-parser": "^4.8.1",
+    "electron-log": "^5.0.0-beta.16",
+    "electron-unhandled": "^4.0.1",
+    "electron-updater": "^5.3.0",
+    "fuse.js": "^6.4.3",
+    "handlebars": "^4.7.6",
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.21",
+    "nanoid": "^3.1.10",
+    "ng-table-virtual-scroll": "^1.4.1",
+    "ngx-markdown": "^14.0.1",
+    "ngx-mat-timepicker": "^14.0.8",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "~6.5.5",
+    "tga2png": "^0.1.3",
+    "tslib": "^2.0.0",
+    "xml2js": "^0.4.23",
+    "zone.js": "~0.11.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guildantix/eq-parse.git"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
+  }
+}

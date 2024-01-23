@@ -1,0 +1,42 @@
+table {
+    td {
+        max-width: 0px;
+    }
+}
+
+div.loading-gina {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20%;
+    align-items: center;
+}
+
+.creator-actions {
+    .spacer {
+        display: flex;
+        flex: 1 0 auto;
+    }
+    button {
+        mat-icon {
+            margin-top: -4px;
+        }
+    }
+    display:flex;
+    flex-direction: row;
+    padding:15px;
+}
+
+.update-record {
+    margin-top: 9px;
+    
+    .timestamp {
+        font-size: 14px;
+    }
+    .update-notes {
+        font-weight: 300;
+        opacity: .8;
+        padding-left: 25px;
+        display: block;
+        white-space: pre-wrap;
+    }
+}

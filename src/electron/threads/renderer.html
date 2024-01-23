@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" /> -->
+    <title>Nag Renderer</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:ital,wght@0,300;0,700;1,300&family=Oswald:wght@200;300;400;500;600;700&family=Press+Start+2P&family=Ranchers&family=Red+Rose:wght@300;400;700&family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <style>
+        body {
+            color: #ffffff;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        body::-webkit-scrollbar { 
+            display: none;
+        }
+
+        div.highlight-border {
+            border: 6px solid #00d4ff59;
+        }
+
+        div.highlight-border .overlay-name-watermark {
+            display: block;
+            color: #00d5ffcc;
+        }
+
+        .drag {
+            background-color: rgba(0,0,0,0.15);
+            resize: both;
+        }
+
+        .resize-n::after {
+            content: '';
+            background-color: rgba(0,0,0,0.5);
+            position: absolute;
+            right: -6px;
+            left: -6px;
+            top: -6px;
+            height: 6px;
+            cursor: ns-resize;
+        }
+
+        .resize-s::after {
+            content: '';
+            background-color: rgba(0,0,0,0.5);
+            position: absolute;
+            right: -6px;
+            left: -6px;
+            bottom: -6px;
+            height: 6px;
+            cursor: ns-resize;
+        }
+
+        .resize-e::after {
+            content: '';
+            background-color: rgba(0,0,0,0.5);
+            position: absolute;
+            right: -6px;
+            top: -6px;
+            width: 6px;
+            bottom: -6px;
+            cursor: ew-resize;
+        }
+
+        .resize-w::after {
+            content: '';
+            background-color: rgba(0,0,0,0.5);
+            position: absolute;
+            left: -6px;
+            top: -6px;
+            width: 6px;
+            bottom: -6px;
+            cursor: ew-resize;
+        }
+
+        .resize-ne::after {
+            content: '';
+            right: -6px;
+            top: -6px;
+            height: 12px;
+            width: 12px;
+            position: absolute;
+            cursor: ne-resize;
+        }
+
+        .resize-se::after {
+            content: '';
+            right: -6px;
+            bottom: -6px;
+            height: 12px;
+            width: 12px;
+            position: absolute;
+            cursor: se-resize;
+        }
+
+        .resize-sw::after {
+            content: '';
+            left: -6px;
+            bottom: -6px;
+            height: 12px;
+            width: 12px;
+            position: absolute;
+            cursor: sw-resize;
+        }
+
+        .resize-nw::after {
+            content: '';
+            left: -6px;
+            top: -6px;
+            height: 12px;
+            width: 12px;
+            position: absolute;
+            cursor: nw-resize;
+        }
+
+        .drag .overlay-name-watermark {
+            display: block;
+        }
+
+        section.body {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-app-region: drag;
+            position: absolute;
+            border: 1px solid orange;
+            left: 6px;
+            right: 6px;
+            top: 6px;
+            bottom: 6px;
+        }
+
+        .overlay-name-watermark {
+            text-align: center;
+            color: rgba(255,255,255,0.66);
+            display: none;
+            z-index: 0;
+        }
+
+        .overlay-name-watermark h1 {
+            white-space: nowrap;
+            font-size: 4.2rem;
+            line-height: 110%;
+            margin: 2.8rem 0 1.68rem 0;
+            display: inline-block;
+            text-shadow: 0px 0px 2px #000000a8, -1px -1px 2px #000000a8, 1px -1px 2px #000000a8, -1px 1px 2px #000000a8, 1px 1px 2px #000000a8;
+        }
+        
+        .overlay-content-area,
+        .healing-content-area {
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 6px;
+            bottom: 6px;
+            padding: 5px;
+        }
+        
+        .overlay-content-area.no-overflow,
+        .healing-content-area.no-overflow {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .overlay-content-area p,
+        .healing-content-area p {
+            margin: 0;
+        }
+
+        .overlay-content-area .progress,
+        .healing-content-area .progress {
+            margin-top: -1px;
+            height: 1.5em;
+            margin-bottom: 0.4em;
+        }
+
+        .overlay-content-area.timer {
+            overflow: visible;
+        }
+
+        .overlay-content-area.timer.ungrouped {
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        .overlay-content-area.timer.reverse {
+            flex-flow: column-reverse nowrap;
+        }
+
+        .fct-label {
+            position: absolute;
+        }
+
+        .fct-critical-hit {
+            font-weight: bold;
+        }
+
+        .animate-bottom {
+            position: absolute;
+            animation: animatebottom 7s linear;
+        }
+        @keyframes animatebottom { 
+            0% { top:100%; opacity:1 } 
+            100% { top:-100px; opacity:1; }
+        }
+
+        .animate-fade-shrink {
+            position: absolute;
+            display: inline-block;
+            text-align: center;
+            /* animation: animate-fadeshrink 4s ease-out; */
+        }
+
+        @keyframes animate-fadeshrink {
+            0% { opacity: 0.5; transform: scale(1.5); }
+            1% { opacity: 1; transform: scale(2.0); }
+            50% { opacity: 1; transform: scale(2.0); }
+            100% { opacity: 0; transform: scale(.1);}
+        }
+
+        .animate-fade-out {
+            position:relative;
+            display: inline-block;
+        }
+
+        .animate-fade-out-now {
+            animation: animate-fadout-now 0.5s ease;
+        }
+
+        @keyframes animate-fadout-now {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .animate-fadeinout-inf {
+            animation: animate-fadeinout 2s ease-in-out infinite;
+        }
+
+        .animate-glow-fadein {
+            animation: animate-fadeinout-in 1s ease-in;
+        }
+
+        .animate-glow-fadeout {
+            animation: animate-fadeinout-out 1s ease-out;
+        }
+
+        @keyframes animate-fadeinout-out {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes animate-fadeinout-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes animate-fadeinout {
+            0% { opacity: 0; }
+            /* 25% { opacity: 0.75; } */
+            50% { opacity: 1; }
+            /* 75% { opacity: 0.75; } */
+            100% { opacity: 0; }
+        }
+
+        .notice-me {
+            transform-origin: center center;
+            animation: notice-me 3.33s 1 ease-in-out;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: subpixel-antialiased;
+            transform: translateZ(0);
+        }
+
+        @keyframes notice-me {
+            0% { transform: scale(1.0); }
+            11.9% { transform: scale(1.25); }
+            28.6% { transform: scale(0.9); }
+
+            /* 33.4% { transform: scale(1.0); } */
+            45.3% { transform: scale(1.25); }
+            62% { transform: scale(0.9); }
+
+            /* 66.8% { transform: scale(1.0); } */
+            78.7% { transform: scale(1.25); }
+            95.4% { transform: scale(0.9); }
+
+            100% { transform: scale(1.0); }
+        }
+
+        .fct-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .fct-dmg-src {
+            font-size: 12px;
+            font-weight: normal;
+            color: #005aff;
+            text-shadow:    0px 0px 1px #000000ff, -1px -1px 1px #000000ff, 1px -1px 1px #000000ff, -1px 1px 1px #000000ff, 1px 1px 1px #000000ff,
+                            0px 0px 5px #000000d9, -1px -1px 5px #000000d9, 1px -1px 5px #000000d9, -1px 1px 5px #000000d9, 1px 1px 5px #000000d9;
+        }
+
+        .fct-text {
+            text-shadow:    0px 0px 1px #000000ff, -1px -1px 1px #000000ff, 1px -1px 1px #000000ff, -1px 1px 1px #000000ff, 1px 1px 1px #000000ff,
+                            0px 0px 5px #000000d9, -1px -1px 5px #000000d9, 1px -1px 5px #000000d9, -1px 1px 5px #000000d9, 1px 1px 5px #000000d9;
+        }
+
+        .fct-healing-out,
+        .fct-healing-in {
+            align-self: flex-end;
+        }
+
+        .dot-text {
+            position: absolute;
+            z-index: 1;
+            padding: 0.25em;
+            line-height: 0.9em;
+            letter-spacing: 1px;
+            color: white;
+            font-weight: 400 !important;
+            text-shadow: -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000, 1px 1px 2px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+
+        .dot-text.ungrouped {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            padding-right: 30px;
+        }
+
+        .grouped-mobs {
+            display: flex;
+            flex-flow: row wrap;
+            align-content: flex-start;
+        }
+
+        .grouped-mobs.reverse {
+            flex-flow: row wrap !important;
+            align-content: flex-end;
+        }
+
+        .mob-dot-group {
+            display: flex;
+            flex-flow: column nowrap;
+            width: 200px;
+        }
+
+            .grouped-mobs.reverse .mob-dot-group {
+                flex-flow: column-reverse nowrap;
+            }
+
+        .mob-dot-group:nth-child(n+0) {
+            margin-left: 25px;
+        }
+
+            .mob-dot-group > div {
+                width: 200px;
+            }
+
+                .mob-dot-group > div > p {
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 200px;
+                    overflow: hidden;
+                }
+
+            .mob-dot-group h6 {
+                text-align: center;
+            }
+            
+            .mob-dot-group .dot-icons-grid {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .mob-dot-icon {
+                display: inline-block;
+                margin: 4px;
+                width: 50px;
+            }
+
+                .mob-dot-icon span {
+                    display: block;
+                }
+    </style>
+
+    <style>
+
+        :root {
+            --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+            --ease-in-cubic: cubic-bezier(0.32, 0, 0.67, 0);
+        }
+
+        @keyframes animate-fadein {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes animate-fadeout {
+            77% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes animate-floatup {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-100px); }
+        }
+
+        @keyframes animate-blowout {
+            0% { transform: scale(1.5); }
+            1% { transform: scale(2.0); }
+            50% { transform: scale(2.0); }
+            100% { transform: scale(.1); }
+        }
+
+        @keyframes animate-grow {
+            0% { transform: scale(.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes animate-shrink {
+            0% { transform: scale(1.0); }
+            100% { transform: scale(.1); }
+        }
+
+        @keyframes animate-blowout-fadeout {
+            0% { transform: scale(1.5); }
+            1% { transform: scale(2.0); }
+            50% { transform: scale(2.0); opacity: 1; }
+            100% { transform: scale(.1); opacity: 0; }
+        }
+
+        /* // Primary animation */
+        /* // var(--random-y) & var(--y-direction), to be applied to the element via script */
+        @keyframes animate-fountain-floatup {
+            0% { transform: translateY(0px); animation-timing-function: var(--ease-out-cubic); }
+            77% { transform: translateY(var(--random-y)); animation-timing-function: ease-in; }
+            100% { transform: translateY(calc(var(--random-y) + var(--y-direction))); animation-timing-function: ease-out; }
+        }
+
+        /* // Secondary animation */
+        /* // var(--random-x), to be applied to the element via script */
+        @keyframes animate-fountain-horizontal {
+            0% { transform: translateX(0px); animation-timing-function: ease-in; }
+            100% { transform: translateX(var(--random-x)); animation-timing-function: ease-in; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <script type="text/javascript">
+        const urlParams = new URLSearchParams( window.location.search );
+        var Renderer = window.api.getRenderer();
+        Renderer( +urlParams.get( 'originX' ), +urlParams.get( 'originY' ), urlParams.get('glowOnStart') === 'true' );
+        
+        window.addEventListener( "mousemove", event => {
+
+            if ( event.target && event.target.classList && event.target.classList.contains( 'mouse-enabled' ) === true ) {
+                window.api.setHandleMouseEvents();
+
+            } else {
+                window.api.setIgnoreMouseEvents();
+                
+            }
+        } );
+        
+    </script>
+
+    <!-- =========================== -->
+    <!--      Overlay Template       -->
+    <!-- =========================== -->
+    <template id="overlay">
+        <div class="overlay-name-watermark"><h1 id="overlay-title">Overlay Title</h1></div>
+        <div class="overlay-content-area">
+
+        </div>
+    </template>
+
+    <style>
+        .content-area-v2 {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            /* border: 2px solid green; */
+        }
+
+        .content-area-v2 .fct-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .content-area-v2 .top-left {
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+
+        }
+
+        .content-area-v2 .top-right {
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: flex-end;
+            justify-content: flex-start;
+
+        }
+
+        .content-area-v2 .bottom-left {
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: flex-start;
+            justify-content: flex-end;
+
+        }
+
+        .content-area-v2 .bottom-right {
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: flex-end;
+            justify-content: flex-end;
+
+        }
+
+        .animation-absolute {
+            position: absolute;
+        }
+    </style>
+    
+    <!-- =========================== -->
+    <!--    FCT Overlay Template     -->
+    <!-- =========================== -->
+    <template id="overlayFct">
+        <div class="overlay-name-watermark"><h1 id="overlay-title">Overlay Title</h1></div>
+        <div class="content-area-v2">
+            <div class="fct-content top-left"></div>
+            <div class="fct-content top-right"></div>
+            <div class="fct-content bottom-left"></div>
+            <div class="fct-content bottom-right"></div>
+            <div class="fct-content random"></div>
+        </div>
+        <div class="overlay-content-area">
+
+        </div>
+        <div class="healing-content-area">
+            
+        </div>
+    </template>
+
+    <!-- =========================== -->
+    <!--      FCT 2 Template         -->
+    <!-- =========================== -->
+    <template id="fct2Template">
+        <!-- <div class="fct-values fctGroupA"> -->
+            <div class="fct-sub-animation">
+                <div class="fct-text-layer">
+                    <span class="fct-text fctText">{{value}}</span>
+                    <span class="fct-dmg-src fctSource">({{damageSource}})</span>
+                </div>
+            </div>
+        <!-- </div> -->
+    </template>
+    
+    <!-- =========================== -->
+    <!--    Display Text Template    -->
+    <!-- =========================== -->
+    <template id="displayTextTemplate">
+        <p>{{{value}}}</p>
+    </template>
+
+    <!-- =========================== -->
+    <!--         FCT Template        -->
+    <!-- =========================== -->
+    <template id="fctTemplate">
+        <span class="fct-text">{{value}}</span>
+        <span class="fct-skill">({{damageSource}})</span>
+    </template>
+
+    <!-- =========================== -->
+    <!--    FCT Critical Template    -->
+    <!-- =========================== -->
+    <template id="fctCriticalTemplate">
+        <p class="fct-text">{{value}}</p>
+        <p class="fct-skill">({{damageSource}})</p>
+    </template>
+
+    <!-- =========================== -->
+    <!--        Timer Template       -->
+    <!-- =========================== -->
+    <template id="timerTemplate">
+        <p class="dot-text ungrouped"><span class="time-remaining"></span>{{{value}}}</p>
+        <!-- Background color of .progress is 13% of the .determinate color. -->
+        <div class="progress" style="background-color: rgba(0,33,0,.75)"><p style="margin: 4px;">&nbsp;</p>
+            <div class="determinate" style="width: 0%; background-color: #008000;"></div>
+        </div>
+    </template>
+
+    <!-- =========================== -->
+    <!--     Timer Icon Template     -->
+    <!-- =========================== -->
+    <template id="timerIconTemplate">
+        <!-- A convergeance of dumb has resulted in the derp -->
+        <img src="{{icon}}" class="dot-icon" derp="{{{iconStyle}}}" />
+    </template>
+
+    <!-- =========================== -->
+    <!--    Target Group Template    -->
+    <!-- =========================== -->
+    <template id="targetGroupTemplate">
+        <h6>{{{name}}}</h6>
+    </template>
+
+    <!-- =========================== -->
+    <!-- Target Group Timer Template -->
+    <!-- =========================== -->
+    <template id="targetGroupTimerTemplate">
+        <p class="dot-text"><span class="time-remaining"></span>{{{value}}}</p>
+        <!-- Background color of .progress is 13% of the .determinate color. -->
+        <div class="progress" style="background-color: rgba(0,33,0,.75)"><p style="margin: 4px;">&nbsp;</p>
+            <div class="determinate" style="width: 40%; background-color: #008000;"></div>
+        </div>
+    </template>
+
+</body>
+</html>

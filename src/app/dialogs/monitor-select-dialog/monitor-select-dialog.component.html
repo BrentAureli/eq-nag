@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Select Monitor</h2>
+
+<mat-dialog-content>
+
+    <p style="margin: 15px 0px 15px 0px; align-self: flex-start;" *ngFor="let msg of messages" [innerHtml]="msg | coloredString"></p>
+
+    <app-display-selector [renderWidth]="renderWidth" [selectedMonitorId]="defaultDisplayId" (onMonitorSelect)="selectedDisplay = $event"></app-display-selector>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    
+    <button mat-button (click)="cancel()" class="t-confirm-no" color="warn">Cancel</button>
+    <button mat-button (click)="accept()" class="t-confirm-no">OK</button>
+
+</mat-dialog-actions>

@@ -1,0 +1,94 @@
+<div class="style-prop-container">
+    
+    <table>
+        <tr>
+            <th colspan="6">{{label}}</th>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <mat-form-field style="width: 100%;">
+                    <mat-label></mat-label>
+                    <mat-select class="font-ddl" [(ngModel)]="model.fontFamily" name="ddlFontFamily" disableOptionCentering (selectionChange)="onChangeFontFamily()" style="max-width: unset;">
+                        <mat-option class="font-option" value="Roboto" style="font-family: Roboto, sans-serif; font-size: 16px;"><small>Roboto</small></mat-option>
+                        <mat-option class="font-option" value="Red Rose" style="font-family: 'Red Rose', sans-serif; font-size: 16px;"><small>Red Rose</small></mat-option>
+                        <mat-option class="font-option" value="Oswald" style="font-family: Oswald, sans-serif; font-size: 16px;"><small>Oswald</small></mat-option>
+                        <mat-option class="font-option" value="Roboto Mono" style="font-family: 'Roboto Mono', sans-serif; font-size: 16px;"><small>Roboto Mono</small></mat-option>
+                        <mat-option class="font-option" value="Open Sans Condensed" style="font-family: 'Open Sans Condensed', sans-serif; font-size: 16px;"><small>Open Sans Condensed</small></mat-option>
+                        <mat-option class="font-option" value="Ranchers" style="font-family: Ranchers, sans-serif; font-size: 16px;"><small>Ranchers</small></mat-option>
+                        <mat-option class="font-option" value="Press Start 2P" style="font-family: 'Press Start 2P', sans-serif; font-size: 14px;"><small>Press Start 2P</small></mat-option>
+                    </mat-select>
+                    <mat-hint>Font Family</mat-hint>
+                </mat-form-field>
+            </td>
+        </tr>
+        <tr>
+            <td>Color</td>
+            <td><app-color-picker [(ngModel)]="model.fontColor" (change)="emitChange()" [inline]="true"></app-color-picker></td>
+            <td>Weight</td>
+            <td><mat-slider thumbLabel tickInterval="1" step="1" min="0" [max]="maxFontWeightIndex" style="width: 100%;" [(ngModel)]="fontWeightIndex" name="sldrFontWeight" (change)="emitChange()" (input)="updateStyleElement('fontWeight', $event)"></mat-slider></td>
+            <td>Size</td>
+            <td><mat-slider thumbLabel tickInterval="1" min="1" max="64" style="width: 100%;" [(ngModel)]="model.fontSize" name="sldrFontSize" (change)="emitChange()" (input)="updateStyleElement('fontSize', $event)"></mat-slider></td>
+        </tr>
+        <tr>
+            <td><mat-checkbox [(ngModel)]="model.showBorder" (change)="emitChange()">Border</mat-checkbox></td>
+            <td><app-color-picker [(ngModel)]="model.borderColor" (change)="emitChange()" [inline]="true"></app-color-picker></td>
+            <td>Intensity</td>
+            <td><mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="borderIntensity" name="sldrBorderIntensity" (change)="onChangeBorderTransparency()" (input)="updateStyleElement('borderIntensity', $event)"></mat-slider></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><mat-checkbox [(ngModel)]="model.showGlow" (change)="emitChange()">Glow</mat-checkbox></td>
+            <td><app-color-picker [(ngModel)]="model.glowColor" (change)="emitChange()" [inline]="true"></app-color-picker></td>
+            <td>Intensity</td>
+            <td><mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="glowIntensity" name="sldrGlowIntensity" (change)="onChangeGlowTransparency()" (input)="updateStyleElement('glowIntensity', $event)"></mat-slider></td>
+            <td>Size</td>
+            <td><mat-slider thumbLabel tickInterval="1" min="0" max="10" style="width: 100%;" [(ngModel)]="model.glowSize" name="sldrTextGlowSize" (change)="emitChange()" (input)="updateStyleElement('glowSize', $event)"></mat-slider></td>
+        </tr>
+        <tr *ngIf="enablePaddingHorizontal || enablePaddingVertical">
+            <td style="vertical-align: top; padding-top: 13px;">Spacing</td>
+            <td></td>
+            <td colspan="2" style="padding-left: 10px; padding-top: 13px;">
+                <ng-template [ngIf]="enablePaddingHorizontal">
+                    <span style="padding-left: 11px;">Left</span>
+                    <mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="model.paddingLeft" name="sldrPaddingLeft" (change)="emitChange()" (input)="updateStyleElement('paddingLeft', $event)"></mat-slider>
+                </ng-template>
+                <ng-template [ngIf]="enablePaddingVertical">
+                    <span style="padding-left: 11px;">Top</span>
+                    <mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="model.paddingTop" name="sldrPaddingTop" (change)="emitChange()" (input)="updateStyleElement('paddingTop', $event)"></mat-slider>
+                </ng-template>
+            </td>
+            <td colspan="2" style="padding-left: 10px; padding-top: 13px;">
+                <ng-template [ngIf]="enablePaddingHorizontal">
+                    <span style="padding-left: 11px;">Right</span>
+                    <mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="model.paddingRight" name="sldrPaddingRight" (change)="emitChange()" (input)="updateStyleElement('paddingRight', $event)"></mat-slider>
+                </ng-template>
+                <ng-template [ngIf]="enablePaddingVertical">
+                    <span style="padding-left: 11px;">Bottom</span>
+                    <mat-slider thumbLabel tickInterval="1" min="0" max="100" style="width: 100%;" [(ngModel)]="model.paddingBottom" name="sldrPaddingBottom" (change)="emitChange()" (input)="updateStyleElement('paddingBottom', $event)"></mat-slider>
+                </ng-template>
+            </td>
+        </tr>
+        <tr *ngIf="enableInlineBlock" style="height: 50px;">
+            <td>Position</td>
+            <td></td>
+            <td colspan="2"><mat-checkbox [(ngModel)]="showInline" name="showInline" (change)="emitChange()">Inline</mat-checkbox></td>
+            <!-- <td></td> -->
+            <td colspan="2"><mat-checkbox [(ngModel)]="showBlock" name="showBlock" (change)="emitChange()">New Line</mat-checkbox></td>
+            <!-- <td></td> -->
+        </tr>
+        <tr *ngIf="enableJustify" style="height: 50px;">
+            <td>Justify</td>
+            <td></td>
+            <td colspan="4">
+                <mat-radio-group [(ngModel)]="model.justify" name="justify" style="display: flex; flex-flow: row nowrap; justify-content: space-between; width: 100%" (change)="emitChange()">
+                    <mat-radio-button class="justify-option" value="left">Left</mat-radio-button>
+                    <mat-radio-button class="justify-option" value="center">Center</mat-radio-button>
+                    <mat-radio-button class="justify-option" value="right">Right</mat-radio-button>
+                </mat-radio-group>
+            </td>
+        </tr>
+    </table>
+
+
+</div>

@@ -1,0 +1,59 @@
+
+
+<p>When using a regular expression capture phrase, the first capture group will be stored in a variable for use in other triggers.</p>
+
+<mat-tab-group animationDuration="0ms" [selectedIndex]="0">
+    <mat-tab label="Variable name">
+        
+        <div class="card-tab-content">
+
+            <mat-form-field>
+                <mat-label>Storage Type</mat-label>
+                <mat-select [(ngModel)]="action.variableStorageType">
+                    <mat-option value="localVariable">Local Variable</mat-option>
+                    <mat-option value="persistentDictionary">Persistent Dictionary</mat-option>
+                </mat-select>
+                <mat-hint></mat-hint>
+            </mat-form-field>
+
+            <ng-template [ngIf]="action.variableStorageType === 'localVariable'">
+
+                <p>The name chosen can be used in conditions and capture phrases for other triggers or parsed into any text with $&#123;VariableName&#125;.</p>
+
+                <mat-form-field>
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="action.variableName" name="txtVariableName" />
+                    <mat-hint>Variable Name</mat-hint>
+                </mat-form-field>
+                <br />
+                <mat-checkbox [(ngModel)]="action.onlyStoreUsedValues" name="cbxOnlyStoreUsedValues">Check if value is used?</mat-checkbox>
+                <div class="checkbox-hint"><small>If this box is checked, the value is checked against active triggers to ensure that the value is used as a condition before being saved.</small></div>
+    
+                <br />
+                <mat-checkbox [(ngModel)]="action.loopBackForValue" name="cbxLoopBackForValue">Loop-back for value?</mat-checkbox>
+                <div class="checkbox-hint"><small>If this box is checked, when the log is loaded it will loop backwards through the log to find the most recent phrase.</small></div>
+
+            </ng-template>
+            <ng-template [ngIf]="action.variableStorageType === 'persistentDictionary'">
+                
+                <!-- TODO: Add a help text modal on click, to display this information. -->
+                <!-- <p>A persistent dictionary type will remember the stored value even after Nag closes.  The name chosen will be used to specify what to name the dictionary.</p> -->
+                <!-- <p>For example, if we keep track of the cast time for players casting Ethereal Light, we could name the dictionary EtherealLightCastTimes.  We could reference the cast time for the stored value in the duration value for timers by using: <code>EtherealLightCastTimes[Azaneal]</code>.</p> -->
+
+                <mat-form-field>
+                    <mat-label></mat-label>
+                    <input matInput [(ngModel)]="action.variableName" name="txtVariableName" />
+                    <mat-hint>Variable Name</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Value</mat-label>
+                    <input matInput [(ngModel)]="action.storeLiteralDefinition" name="txtStoreLiteralDefinition" />
+                    <mat-hint>The value to parse and store.</mat-hint>
+                </mat-form-field>
+                
+            </ng-template>
+            
+        </div>
+    </mat-tab>
+</mat-tab-group>

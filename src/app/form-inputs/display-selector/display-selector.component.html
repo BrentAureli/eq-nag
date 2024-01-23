@@ -1,0 +1,14 @@
+<div #renderBox class="renderBox">
+    <div [style.width.px]="renderWidth" [style.height.px]="renderHeight" class="renderArea">
+
+        <div *ngFor="let display of displays; let i = index"
+            [ngClass]="{'selected': selectedMonitorIndex === i}"
+            (click)="selectedMonitorIndex = i"
+            [style.width.px]="getDisplayWidth(display.bounds.width)"
+            [style.height.px]="getDisplayHeight(display.bounds.height)"
+            [style.left.px]="getDisplayLeft(display.bounds.x)"
+            [style.top.px]="getDisplayTop(display.bounds.y)"
+        ><h1>{{i + 1}}</h1></div>
+
+    </div>
+</div>

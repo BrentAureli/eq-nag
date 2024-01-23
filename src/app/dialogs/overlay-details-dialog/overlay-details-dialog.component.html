@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>New Overlay</h2>
+
+<mat-dialog-content>
+
+    <form #detailsForm="ngForm">
+
+        <mat-form-field>
+            <mat-label></mat-label>
+            <input matInput [(ngModel)]="model.name" name="txtName" required />
+            <mat-hint>Name</mat-hint>
+        </mat-form-field>
+        
+        <mat-form-field>
+            <mat-label></mat-label>
+            <mat-select [(ngModel)]="model.overlayType" name="ddlOverlayType" required>
+                <mat-option value="Log">Debug Log</mat-option>
+                <mat-option value="Alert">Text Notifications</mat-option>
+                <mat-option value="Timer">Timer & Countdown</mat-option>
+                <mat-option value="FCT">Floating Combat Text</mat-option>
+                <!-- TODO: Am I going to do anything with charts? -->
+                <mat-option value="Chart" disabled>Chart</mat-option>
+            </mat-select>
+            <mat-hint>Overlay Type</mat-hint>
+        </mat-form-field>
+
+        <app-link-button (click)="enterDescription = true" *ngIf="!enterDescription" style="margin-top: 5px;">Enter a description ...</app-link-button>
+
+        <mat-form-field *ngIf="enterDescription">
+            <mat-label></mat-label>
+            <textarea matInput [(ngModel)]="model.description" name="txtDescription" rows="5"></textarea>
+            <mat-hint>Description</mat-hint>
+        </mat-form-field>
+
+        <div style="margin: 20px 0;">
+            <app-display-selector [renderWidth]="400" (onMonitorSelect)="onDisplaySelected($event)"></app-display-selector>
+        </div>
+
+    </form>
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+  <button mat-button (click)="cancel()" class="t-confirm-no" color="default">Cancel</button>
+  <button mat-button [mat-dialog-close]="model" class="t-confirm-yes" color="accent">Save Changes</button>
+
+</mat-dialog-actions>

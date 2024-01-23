@@ -1,0 +1,63 @@
+<p style="margin: 0;">
+    <mat-toolbar class="titlebar" color="primary">
+        <span>NAG<span class="hover-only">: An EverQuest Notification Agent</span></span>
+        <span class="spacer"></span>
+        <div class="progress-bar" *ngIf="archivePercent !== null"><mat-progress-bar mode="determinate" [value]="archivePercent * 100" color="accent" class="color-green"></mat-progress-bar><div>{{archiveLabel}}</div></div>
+        <button mat-icon-button aria-label="Run Setup Wizard" (click)="runSetupWizard()" *ngIf="!setupCompleted">
+            <mat-icon class="material-icons-outlined color-green" style="font-size: 32px; line-height: 32px; width: 32px; height: 32px;">settings_suggest</mat-icon>
+        </button>
+        <!-- <button mat-icon-button aria-label="Easy Mode" (click)="showEasyWindow()" class="hover-green"><mat-icon class="material-icons-outlined">auto_awesome</mat-icon></button> -->
+        <button mat-icon-button aria-label="Minimize to tray" (click)="sendToTray()">
+            <mat-icon>south_east</mat-icon>
+        </button>
+        <button mat-icon-button aria-label="Minimize application" (click)="minimizeTaskbar()">
+            <mat-icon>minimize</mat-icon>
+        </button>
+        <button mat-icon-button aria-label="Exit application" (click)="quitApp()">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </mat-toolbar>
+</p>
+<section>
+    <mat-tab-group animationDuration="0ms" (selectedIndexChange)="onChangeTabs($event)" [selectedIndex]="0">
+
+        <mat-tab label="Characters">
+            <mat-toolbar>
+                <span>Characters</span>
+                <span class="spacer"></span>
+                <button mat-button color="accent" (click)="characterList.newCharacter()">New Character</button>
+                <button mat-button (click)="testFn()" *ngIf="false">Test</button>
+            </mat-toolbar>
+
+            <div class="tab-content">
+                <app-characters-list #characterList></app-characters-list>
+            </div>
+
+        </mat-tab>
+        <mat-tab label="Triggers">
+                
+            <app-triggers #triggersList></app-triggers>
+            
+        </mat-tab>
+        <mat-tab label="Overlays">
+                
+            <app-overlays [damageDealtOverlayId]="damageDealtOverlayId" [damageTakenOverlayId]="damageTakenOverlayId" [isDev]="isDev"></app-overlays>
+
+        </mat-tab>
+        <mat-tab label="Floating Combat Text">
+
+            <app-floating-combat-text></app-floating-combat-text>
+
+        </mat-tab>
+        <mat-tab label="Settings">
+
+            <app-settings [characterList]="characterList" #settingsPanel></app-settings>
+
+        </mat-tab>
+    </mat-tab-group>
+
+    <input type="file" #fileSelector style="display:none;" accept="*.txt" (change)="fileSelected($event)" />
+
+</section>
+
+<app-debug-console></app-debug-console>

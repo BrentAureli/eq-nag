@@ -1,0 +1,36 @@
+.context-menu-container {
+    padding: 0px;
+    min-width: 100px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 
+                0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+.context-menu-background {
+    button {
+        mat-icon {
+            margin-right: 15px;
+        }
+        .icon-spacer {
+            width: 29px;
+            display: inline-block;
+        }
+        text-align: left;
+        width: 100%;
+    }
+    padding: 5px 0;
+}
+.primary-menu-item {
+    .context-menu-background.sub-menu {
+        background-color: rgb(33, 33, 33);
+        display: none;
+        left: 165px;
+        position: absolute;
+        margin-top: -41px;
+        border-left: 1px solid #69f0ae;
+        z-index: 2;
+    }
+    &:hover {
+        .context-menu-background.sub-menu {
+            display: block;
+        }
+    }
+}

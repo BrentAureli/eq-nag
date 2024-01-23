@@ -1,0 +1,152 @@
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.example-headers-align .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+div.character-tab-content {
+
+    > mat-card {
+        background-color: #00000029;
+        margin: 7px;
+    }
+
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 1 0px;
+}
+
+mat-panel-description {
+    
+    mat-icon {
+        margin-left:15px;
+    }
+    
+    text-transform: capitalize;
+
+}
+
+mat-panel-title {
+    small {
+        margin-left: 15px;
+        font-size: 18px;
+        font-weight: 100;
+        color: #ffffff3b;
+        font-family: 'Open Sans Condensed';
+        margin-top: -5px;
+        float: right;
+        margin-right: 115px;
+        margin-left: auto;
+        margin-top: -5px;
+        width: 95px;
+    }
+}
+
+.saved-label {
+    position: fixed;
+    // display: block;
+    display: none;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 25px;
+    z-index: 1;
+}
+
+.character-triggers {
+    display: flex;
+    flex-flow: row nowrap;
+    background-color: rgb(33,33,33);
+    margin: 25px;
+
+    .triggers-list {
+        flex: 1 1 0px;
+        min-height: 550px;
+        max-height: 700px;
+        
+        h2 {
+            margin: 0;
+            padding: 25px 50px;
+            font-weight: 100;
+            background-color: #1a1a1a;
+            text-align: center;
+        }
+
+        > div {
+            position: relative;
+            height: calc(100% - 100px); // The header is 70px, plus the padding;
+            overflow-y: auto;
+            padding: 0 15px;
+            top: 15px;
+        }
+        // margin-right: 15px;
+
+        mat-tree-node.trigger-node {
+            mat-checkbox,
+            button {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        mat-tree-node.folder-node {
+            mat-checkbox {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        .disabled-label {
+            color: rgba(255,255,255,.3);
+        }
+        
+    }
+
+    .action-buttons {
+        flex: 0 0 50px;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        background-color: #1a1a1a;
+
+        .double-chevron {
+            mat-icon:nth-child(2) {
+                margin-left: -18px;
+            }
+        }
+    }
+}
+
+button.mat-option-button {
+    float: right;
+
+    mat-icon {
+        margin-right: 0;
+    }
+}
+
+table {
+    tr {
+        td {
+            &.character-focus-label {
+                vertical-align: top;
+                padding-top: 20px;
+            }
+            &.character-focus-values {
+                vertical-align: top;
+                padding-top: 5px;
+            }
+        }
+    }
+}

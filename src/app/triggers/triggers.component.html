@@ -1,0 +1,196 @@
+<mat-toolbar>
+    <span>Triggers</span>
+    <span class="spacer"></span>
+    <mat-form-field style="width: 275px; color: #7b1fa2;">
+        <mat-label></mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="searchTriggers()" />
+        <mat-hint>Search for triggers by name, description, phrase, etc...</mat-hint>
+    </mat-form-field>
+    <!-- <button mat-button (click)="getAllTriggerfiles()">Download All Files</button> TODO: Remove button -->
+    <button mat-button class="color-blue" (click)="openTriggerLibrary()"><mat-icon class="material-icons">local_library</mat-icon> Trigger Library</button>
+    <button mat-button color="accent" (click)="showNewTriggerDialog()">New Trigger</button>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #autoGenMenu="matMenu" class="trigger-main-menu sub-menu">
+        <h3 class="color-blue">Trigger Generators</h3>
+        <h2>Allakhazam</h2>
+        <button mat-menu-item (click)="showNewDotTimerDialog()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>DoT Timer</span>
+        </button>
+        <button mat-menu-item (click)="showNewRaidAbilityDialog()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Raid Ability</span>
+        </button>
+        <button mat-menu-item (click)="showNewBuffTimerDialog()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Buff Timer</span>
+        </button>
+        <h2>EQ Spell Resources</h2>
+        <button mat-menu-item (click)="showNewDotTimerEqsrDialog()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>DoT Timer</span>
+        </button>
+        <button mat-menu-item (click)="showNewBuffTimerEqsrDialog()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Buff Timer</span>
+        </button>
+    </mat-menu>
+    <mat-menu #hotkeyMenu="matMenu" class="trigger-main-menu sub-menu">
+        <h3 class="color-blue">Create Hotkeys</h3>
+        <button mat-menu-item (click)="copyDeathRecapHotkey()" [disabled]="deathRecapPreferences?.engageMode !== 'hotkey'">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Death Recap</span>
+        </button>
+        <button mat-menu-item (click)="copyClearAllHotkey()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Clear All</span>
+        </button>
+    </mat-menu>
+    <mat-menu #menu="matMenu" class="trigger-main-menu" xPosition="before">
+        <button mat-menu-item [matMenuTriggerFor]="autoGenMenu">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Auto Generation</span>
+        </button>
+        <hr />
+        <button mat-menu-item [matMenuTriggerFor]="hotkeyMenu">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Hotkeys</span>
+        </button>
+        <hr />
+        <button mat-menu-item (click)="showSimLogEntry()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Simulate Log</span>
+        </button>
+        <button mat-menu-item (click)="openDeathRecap()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Death Recap</span>
+        </button>
+        <hr />
+        <button mat-menu-item (click)="installMultiCode()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Install Quick Share Code</span>
+        </button>
+        <hr />
+        <button mat-menu-item (click)="ginaImporter()">
+            <!-- <mat-icon>system_update_alt</mat-icon> -->
+            <span>Import from GINA</span>
+        </button>
+        <!-- <button mat-menu-item disabled>
+            <mat-icon>voicemail</mat-icon>
+            <span>Check voice mail</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>notifications_off</mat-icon>
+            <span>Disable alerts</span>
+        </button> -->
+    </mat-menu>
+</mat-toolbar>
+<div class="tab-content">
+
+    <mat-progress-bar mode="indeterminate" *ngIf="processing"></mat-progress-bar>
+
+    <div class="ft-row" style="position: fixed; top: 200px; left: 10px; right: 0; bottom: 10px;">
+        <div class="ft-item" style="margin: 3px; width: 32%;">
+
+            <div class="ft-content">
+
+                <!-- This is the folder explorer header. -->
+                <div class="trigger-categories-header">
+                    <span>Trigger folders</span>
+                    <span class="spacer"></span>
+                    <button mat-icon-button class="small" class="color-red" (click)="restoreFolderHierarchy()" *ngIf="restoreFolderHierarchy != null" matTooltip="Undo changes to the folder hierarchy."><mat-icon [inline]="true">replay</mat-icon></button>
+                    <button mat-icon-button class="small" (click)="addTriggerFolderDialog()"><mat-icon [inline]="true">add</mat-icon></button>
+                    <button mat-icon-button class="small" (click)="toggleTree()"><mat-icon *ngIf="!allExpanded" [inline]="true">unfold_more</mat-icon><mat-icon *ngIf="allExpanded" [inline]="true">unfold_less</mat-icon></button>
+                </div>
+
+                <!-- This is the instructions on how to add folders if the user has no folders. -->
+                <div class="instructions" *ngIf="dataSource.data?.length === 0">
+                    <span>You have no trigger folders. Click on the <mat-icon [inline]="true">create_new_folder</mat-icon> to start adding folders.</span>
+                </div>
+                <cdk-virtual-scroll-viewport tvsItemSize itemSize="27" class="wrapper mat-elevation-z2" style="height: 100%">
+                    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+
+                        <!-- This is the tree node template for leaf nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20" [ngClass]="{selected: node.folderId === selectedFolderId}" [appContextMenu]="getFolderContextMenu(node.folderId, node.name)">
+                            <button mat-icon-button [disabled]="true">
+                                <span style="display:inline-block;width:18px;">&nbsp;</span>
+                            </button>
+                            <span class="spacer tree-click-target" (click)="toggleSelectedFolder(node.folderId)">{{node.name}}</span>
+                            <!-- <button mat-icon-button color="warn" class="small delete-button"><mat-icon [inline]="true">cancel</mat-icon></button> -->
+                            <!-- class="material-icons-outlined" -->
+                            <button mat-icon-button class="small" (click)="selectParentFolder(node.folderId)"><mat-icon [inline]="true">sort</mat-icon></button>
+                        </mat-tree-node>
+
+                        <!-- This is the tree node template for expandable nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="20" [ngClass]="{selected: node.folderId === selectedFolderId}" [appContextMenu]="getFolderContextMenu(node.folderId, node.name)">
+                            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name" (click)="onExpand()">
+                                <mat-icon [inline]="true" class="mat-icon-rtl-mirror">
+                                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                </mat-icon>
+                            </button>
+                            <span class="spacer tree-click-target" (click)="toggleSelectedFolder(node.folderId)">{{node.name}}</span>
+                            <!-- <button mat-icon-button color="warn" class="small delete-button"><mat-icon [inline]="true">cancel</mat-icon></button> -->
+                            <button mat-icon-button class="small" (click)="selectParentFolder(node.folderId)"><mat-icon [inline]="true">sort</mat-icon></button>
+                        </mat-tree-node>
+                    </mat-tree>
+                </cdk-virtual-scroll-viewport>
+            </div>
+
+        </div>
+
+        <div class="ft-item" style="margin: 3px; width: 66%;">
+            <div class="ft-content">
+                <cdk-virtual-scroll-viewport tvsItemSize itemSize="27" class="wrapper mat-elevation-z2" style="height: 100%" #triggerScroller>
+                    <table mat-table #triggersTable="matTable" style="width: 100%; min-width: 600px;" 
+                        [dataSource]="dataSourceTest"
+                        class="capture-phrases">
+    
+                        <ng-container matColumnDef="enabled">
+                            <th mat-header-cell *matHeaderCellDef style="text-align: center; width: 50px;">  </th>
+                            <td mat-cell *matCellDef="let element; let i = index" style="text-align: center; width: 50px;">
+                                <!-- <mat-slide-toggle color="default" [(ngModel)]="element.enabled"></mat-slide-toggle> -->
+                                <!-- <mat-checkbox color="warn"></mat-checkbox> -->
+                                <button mat-icon-button color="warn" *ngIf="!element.enabled" (click)="toggleEnabled(element)" style="opacity: 0.75;"><mat-icon>disabled_by_default</mat-icon></button>
+                                <button mat-icon-button color="accent" *ngIf="element.enabled" (click)="toggleEnabled(element)" style="opacity: 0.75;"><mat-icon class="material-icons-outlined">check_box</mat-icon></button>
+                            </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="edit">
+                            <th mat-header-cell *matHeaderCellDef style="text-align: center; width: 50px;">  </th>
+                            <td mat-cell *matCellDef="let element; let i = index" style="text-align: center; width: 50px;">
+                                <button mat-button color="accent" aria-label="Edit this trigger" (click)="showEditTriggerDialog(element.triggerId)">Edit</button>
+                                <!-- <button mat-icon-button><mat-icon>more_vert</mat-icon></button> -->
+                            </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef style="width: 100px; padding-left: 15px;"> Id </th>
+                            <td mat-cell *matCellDef="let element; let i = index" style="width: 100px; padding-left: 15px;"> {{element.triggerId}} </td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef style="padding-left: 15px;"> Name <span style="float:right;" *ngIf="filteredTriggers?.length > 0"><span style="font-weight: 400;">Count:</span> {{filteredTriggers?.length}}</span></th>
+                            <td mat-cell *matCellDef="let element; let i = index" style="padding-left: 15px;">{{element.name}} <span class="text-depress" style="float: right;">{{getTriggerFamily(element)}}</span></td>
+                        </ng-container>
+    
+                        <ng-container matColumnDef="delete">
+                            <th mat-header-cell *matHeaderCellDef style="text-align: center; width: 50px; padding-left: 15px;">  </th>
+                            <td mat-cell *matCellDef="let element; let i = index" style="text-align: center; width: 50px; padding-left: 15px;">
+                                <button mat-icon-button color="warn" aria-label="Delete this trigger" (click)="deleteTrigger(element.triggerId)">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+    
+                        <tr mat-header-row *matHeaderRowDef="['enabled', 'edit', 'name', 'delete']; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let element; let i = index; columns: ['enabled', 'edit', 'name', 'delete'];" [appContextMenu]="getTriggerContextMenu(element, i)"></tr>
+    
+                    </table>
+                </cdk-virtual-scroll-viewport>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<mat-tab-group animationDuration="0ms" [selectedIndex]="0">
+    <mat-tab label="Speak">
+        
+        <div class="card-tab-content">
+
+            <mat-form-field>
+                <mat-label></mat-label>
+                <input matInput [(ngModel)]="action.displayText" name="txtSpeakText" />
+                <mat-hint>Text to speak</mat-hint>
+                <button mat-icon-button type="button" color="accent" aria-label="Speak Text" matSuffix (click)="speakPhrase(action.displayText, action.speechRate)">
+                    <mat-icon>play_circle_outline</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <div class="card-property">
+                <div class="content-middle">Volume</div>
+                <div class="content-right"><mat-slider [(ngModel)]="action.speechVolume" thumbLabel tickInterval="1" min="1" max="100" style="width: 100%;" ></mat-slider></div>
+            </div>
+
+            <div class="card-property" style="align-items: center;">
+                <div class="content-middle">Rate</div>
+                <mat-button-toggle-group name="speakingRate" aria-label="Select the speaking rate for this speak action." [(ngModel)]="action.speechRate">
+                    <mat-button-toggle [value]="1.00">Normal</mat-button-toggle>
+                    <mat-button-toggle [value]="1.75">Fast</mat-button-toggle>
+                    <mat-button-toggle [value]="2.25">Very Fast</mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+
+            <mat-checkbox [(ngModel)]="action.interruptSpeech" name="cbxInterruptSpeech" title="If the TTS engine is currently speaking, that speech will be interrupted when this trigger action executes.">Interrupt speech</mat-checkbox><br />
+            <mat-checkbox [(ngModel)]="action.speakNext" name="cbxSpeakNext" title="If the TTS engine is currently speaking, this option will not interrupt the current speech but will be the next thing the TTS speaks.">Speak Next</mat-checkbox>
+            
+        </div>
+    </mat-tab>
+</mat-tab-group>

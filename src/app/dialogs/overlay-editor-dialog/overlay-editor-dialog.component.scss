@@ -1,0 +1,102 @@
+
+.flex-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+mat-form-field {
+    font-size: 12px;
+}
+
+.margin-t-50 {
+    margin-top: 50px;
+}
+
+.margin-t-25 {
+    margin-top: 25px;
+}
+
+legend.full-width {
+    min-width: 100%;
+}
+
+.font-ddl {
+    max-width: unset;
+    
+}
+
+.mat-select-panel mat-option.mat-option {
+    height: unset;
+}
+
+.mat-option-text.mat-option-text {
+    white-space: normal;
+}
+
+mat-option.font-option {
+    height: unset;
+
+    small {
+        display: block;
+        color: #ffffff82;
+        margin-top: -27px;
+        margin-left: 10px;
+        margin-bottom: -10px;
+    }
+}
+
+span.place-holder {
+    display: inline;
+    position: relative;
+}
+
+::ng-deep mat-option.font-option span.mat-option-text::before {
+    content: "The quick brown fox jumped over the lazy dog."
+}
+
+mat-tab-group {
+    height: 100%;
+}
+
+mat-radio-group {
+    margin-top: 10px;
+}
+
+mat-radio-group.horizontal {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    mat-radio-button {
+        margin: 0 10px;
+    }
+}
+
+.with-preview {
+    padding: 167px 10px 0 10px !important;
+
+}
+
+.game-preview {
+    position: fixed;
+    z-index: 2;
+    overflow: hidden;
+    top: 113px;
+    right: 0;
+    left: 0;
+    border: 5px solid #585858;
+    border: 15px solid #1a1a1a;
+    background-color: #1a1a1a;
+
+    .text-preview {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        height: 126px;
+        white-space: nowrap;
+        overflow: visible;
+    }
+}

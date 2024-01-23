@@ -1,0 +1,27 @@
+mat-form-field {
+    width: 100%;
+}
+
+.text-preview-container {
+    flex: none;
+    display: table;
+    max-width: 100%;
+    text-align: center;
+    width: 98%;
+    height: 100px;
+    background-color: #1a1a1a;
+
+    .text-preview {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        height: 90px;
+        margin-top: 5px;
+        white-space: nowrap;
+    }
+
+    &.colored-back {
+        background-image: linear-gradient(to bottom right, red,orange,yellow,green,blue,indigo,violet);
+    }
+}
